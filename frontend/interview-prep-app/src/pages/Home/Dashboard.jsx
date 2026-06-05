@@ -237,7 +237,8 @@ const fetchAllSessions = async () => {
                 role={data?.role || ""}
                 topicsToFocus={data?.topicsToFocus || ""}
                 experience={data?.experience || "-"}
-                questions={data?.questions?.length || "-"}
+                questions={data?.questions?.length || 0}
+                doneCount={data?.questions?.filter(q => q.isDone)?.length || 0}
                 description={data?.description || ""}
                 lastUpdated={
                   data?.updatedAt
@@ -278,12 +279,13 @@ const fetchAllSessions = async () => {
   onClose={() =>
     setOpenDeleteAlert({ open: false, data: null })
   }
-  title="Delete Alert"
+  hideHeader
 >
-  <div className="w-[30vw]">
+  <div>
     <DeleteAlertContent
       content="Are you sure you want to delete this session detail?"
       onDelete={() => deleteSession(openDeleteAlert.data)}
+      onCancel={() => setOpenDeleteAlert({ open: false, data: null })}
     />
   </div>
 </Modal>

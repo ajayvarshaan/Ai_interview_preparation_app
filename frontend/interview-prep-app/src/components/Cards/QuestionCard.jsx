@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
-import { LuChevronDown, LuPin, LuPinOff, LuSparkles } from "react-icons/lu";
+import { LuChevronDown, LuPin, LuPinOff, LuSparkles, LuCircleCheck, LuCircle } from "react-icons/lu";
 import AIResponsePreview from "../AIResponsePreview";
 
-const QuestionCard = ({ question, answer, onLearnMore, isPinned, onTogglePin, index }) => {
+const QuestionCard = ({ question, answer, onLearnMore, isPinned, onTogglePin, isDone, onToggleDone, index }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [height, setHeight] = useState(0);
   const contentRef = useRef(null);
@@ -14,7 +14,9 @@ const QuestionCard = ({ question, answer, onLearnMore, isPinned, onTogglePin, in
   return (
     <div
       className={`relative rounded-2xl mb-3 group transition-all duration-300 ${
-        isPinned
+        isDone
+          ? "border border-green-200 bg-green-50/40 shadow-sm"
+          : isPinned
           ? "border border-orange-300 shadow-lg shadow-orange-100/60 bg-gradient-to-br from-orange-50/80 to-amber-50/40"
           : "border border-gray-100 bg-white shadow-sm hover:shadow-md hover:border-indigo-200"
       }`}
@@ -32,9 +34,15 @@ const QuestionCard = ({ question, answer, onLearnMore, isPinned, onTogglePin, in
         .answer-content { animation: expandIn 0.25s ease forwards; }
       `}</style>
 
-      {isPinned && (
+      {isPinned && !isDone && (
         <div className="pin-dot absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-orange-400 border-2 border-white flex items-center justify-center z-10">
           <LuPin className="w-2 h-2 text-white" />
+        </div>
+      )}
+
+      {isDone && (
+        <div className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-green-500 border-2 border-white flex items-center justify-center z-10">
+          <LuCircleCheck className="w-2.5 h-2.5 text-white" />
         </div>
       )}
 
@@ -43,21 +51,25 @@ const QuestionCard = ({ question, answer, onLearnMore, isPinned, onTogglePin, in
           <div className="flex-shrink-0 flex flex-col items-center">
             <div
               className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shadow-sm transition-all duration-300 ${
-                isExpanded
+                isDone
+                  ? "bg-gradient-to-br from-green-400 to-emerald-500 text-white shadow-green-200"
+                  : isExpanded
                   ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-indigo-200"
                   : isPinned
                   ? "bg-gradient-to-br from-orange-400 to-amber-500 text-white shadow-orange-200"
                   : "bg-gradient-to-br from-slate-100 to-slate-200 text-slate-600 group-hover:from-indigo-500 group-hover:to-purple-600 group-hover:text-white group-hover:shadow-indigo-200"
               }`}
             >
-              Q
+              {isDone ? "✓" : "Q"}
             </div>
             {isExpanded && <div className="w-px flex-1 mt-2 bg-gradient-to-b from-indigo-300/60 to-transparent min-h-[20px]" />}
           </div>
 
           <div className="flex-1 min-w-0">
             <h3
-              className="text-sm font-semibold text-gray-800 cursor-pointer leading-relaxed hover:text-indigo-700 transition-colors pr-2"
+              className={`text-sm font-semibold leading-relaxed cursor-pointer hover:text-indigo-700 transition-colors pr-2 ${
+                isDone ? "line-through text-gray-400" : "text-gray-800"
+              }`}
               onClick={() => setIsExpanded(!isExpanded)}
             >
               {question}
@@ -80,6 +92,22 @@ const QuestionCard = ({ question, answer, onLearnMore, isPinned, onTogglePin, in
           </div>
 
           <div className="flex items-center gap-1.5 flex-shrink-0">
+            {/* Done toggle - always visible */}
+            <button
+              className={`p-1.5 rounded-lg transition-all duration-200 ${
+                isDone
+                  ? "text-green-500 bg-green-100 hover:bg-green-200"
+                  : "text-gray-300 hover:text-green-500 hover:bg-green-50"
+              }`}
+              onClick={onToggleDone}
+              title={isDone ? "Mark Undone" : "Mark Done"}
+            >
+              {isDone
+                ? <LuCircleCheck className="w-4 h-4" />
+                : <LuCircle className="w-4 h-4" />
+              }
+            </button>
+
             <div className={`flex items-center gap-1.5 transition-all ${isExpanded ? "flex" : "hidden group-hover:flex"}`}>
               <button
                 className={`p-1.5 rounded-lg transition-all duration-200 ${

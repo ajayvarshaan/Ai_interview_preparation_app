@@ -52,7 +52,26 @@ Return the result as a valid JSON object in the following format:
 Important: Do NOT add any extra text outside the JSON format. Only return valid JSON.
 `;
 
+const evaluateAnswerPrompt = (question, userAnswer) => `
+You are an expert technical interviewer evaluating a candidate's answer.
+
+Question: "${question}"
+Candidate's Answer: "${userAnswer}"
+
+Evaluate the answer and return a JSON object with the following fields:
+{
+  "score": <number from 0 to 10>,
+  "feedback": "Detailed feedback on the answer, what was good, what was missing.",
+  "idealAnswer": "A concise ideal answer for this question.",
+  "strengths": ["strength 1", "strength 2"],
+  "improvements": ["improvement 1", "improvement 2"]
+}
+
+Important: Do NOT add any extra text outside the JSON format. Only return valid JSON.
+`;
+
 module.exports = {
   questionAnswerPrompt,
   conceptExplainPrompt,
+  evaluateAnswerPrompt,
 };

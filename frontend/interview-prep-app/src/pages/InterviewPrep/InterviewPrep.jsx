@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   LuCircleAlert, LuSparkles, LuX, LuBrain,
-  LuMessageSquare, LuZap,
+  LuMessageSquare, LuZap, LuSwords, LuDownload,
+  LuSearch, LuFilter,
 } from "react-icons/lu";
+import { exportSessionToPDF } from "../../utils/exportPDF";
 import SpinnerLoader from "../../components/Loader/SpinnerLoader";
 import DashboardLayout from "../../components/Layouts/DashboardLayout";
 import RoleInfoHeader from "../../components/RoleInfoHeader";
@@ -18,6 +20,7 @@ import SkeletonLoader from "../../components/Loader/SkeletonLoader";
 
 const InterviewPrep = () => {
   const { sessionId } = useParams();
+  const navigate = useNavigate();
 
   const [sessionData, setSessionData] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
@@ -25,6 +28,8 @@ const InterviewPrep = () => {
   const [explanation, setExplanation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdateLoader, setIsUpdateLoader] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState("all"); // all | pinned | done | undone
 
   const fetchSessionDetailsById = async () => {
     try {
@@ -61,6 +66,15 @@ const InterviewPrep = () => {
     }
   };
 
+  const toggleQuestionDoneStatus = async (questionId) => {
+    try {
+      const response = await axiosInstance.post(API_PATHS.QUESTION.DONE(questionId));
+      if (response.data?.question) fetchSessionDetailsById();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const uploadMoreQuestions = async () => {
     try {
       setIsUpdateLoader(true);
@@ -90,8 +104,28 @@ const InterviewPrep = () => {
     return () => {};
   }, []);
 
-  const totalQ = sessionData?.questions?.length || 0;
-  const pinnedQ = sessionData?.questions?.filter(q => q.isPinned)?.length || 0;
+  const totalQ  = sessionData?.questions?.length || 0;
+  const pinnedQ  = sessionData?.questions?.filter(q => q.isPinned)?.length || 0;
+  const doneQ    = sessionData?.questions?.filter(q => q.isDone)?.length || 0;
+  const progress = totalQ > 0 ? Math.round((doneQ / totalQ) * 100) : 0;
+
+  const filteredQuestions = (sessionData?.questions || [])
+    .filter(q => {
+      const matchSearch = q.question?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchFilter =
+        filter === "all"    ? true :
+        filter === "pinned" ? q.isPinned :
+        filter === "done"   ? q.isDone :
+        filter === "undone" ? !q.isDone : true;
+      return matchSearch && matchFilter;
+    });
+
+  const FILTERS = [
+    { key: "all",    label: "All",    count: totalQ },
+    { key: "pinned", label: "Pinned", count: pinnedQ },
+    { key: "done",   label: "Done",   count: doneQ },
+    { key: "undone", label: "Undone", count: totalQ - doneQ },
+  ];
 
   return (
     <DashboardLayout>
@@ -150,23 +184,105 @@ const InterviewPrep = () => {
       <div className="page-bg min-h-screen px-4 md:px-8 py-7">
 
         {/* Section Header */}
-        <div className="section-anim flex items-center justify-between mb-6">
+        <div className="section-anim flex flex-wrap items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-200">
               <LuBrain className="text-white w-4.5 h-4.5" size={18} />
             </div>
             <div>
               <h2 className="text-lg font-bold text-gray-900 leading-tight">Interview Q &amp; A</h2>
-              <p className="text-xs text-gray-400 mt-0.5">{totalQ} questions · {pinnedQ} pinned</p>
+              <p className="text-xs text-gray-400 mt-0.5">{totalQ} questions · {pinnedQ} pinned · {doneQ} done</p>
             </div>
           </div>
 
-          <div className="hidden sm:flex items-center gap-2 bg-white border border-indigo-100 rounded-xl px-4 py-2 shadow-sm">
-            <LuMessageSquare size={14} className="text-indigo-400" />
-            <span className="text-xs font-semibold text-gray-600">{totalQ} total</span>
-            <div className="w-20 h-1.5 bg-gray-100 rounded-full overflow-hidden ml-1">
-              <div className="h-full rounded-full shimmer-bg" style={{ width: "100%" }} />
-            </div>
+          <div className="flex items-center gap-2">
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={() => exportSessionToPDF(sessionData)}
+              className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-xl shadow-sm border border-gray-200 transition"
+            >
+              <LuDownload size={14} className="text-orange-500" />
+              Export PDF
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={() => navigate(`/mock-interview/${sessionId}`)}
+              className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-xl shadow-md shadow-orange-200 transition"
+            >
+              <LuSwords size={14} />
+              Mock Interview
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mb-4 bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-semibold text-gray-700">Session Progress</span>
+            <span className={`text-sm font-bold ${
+              progress === 100 ? "text-green-500" : progress >= 50 ? "text-orange-500" : "text-indigo-500"
+            }`}>
+              {doneQ}/{totalQ} completed {progress === 100 && "🎉"}
+            </span>
+          </div>
+          <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+            <motion.div
+              className={`h-full rounded-full ${
+                progress === 100 ? "bg-green-500" : progress >= 50 ? "bg-orange-400" : "bg-indigo-500"
+              }`}
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            />
+          </div>
+        </div>
+
+        {/* Search & Filter */}
+        <div className="mb-5 flex flex-col sm:flex-row gap-3">
+          {/* Search */}
+          <div className="relative flex-1">
+            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
+            <input
+              type="text"
+              placeholder="Search questions..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent shadow-sm transition"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <LuX size={14} />
+              </button>
+            )}
+          </div>
+
+          {/* Filter tabs */}
+          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-2 py-1.5 shadow-sm">
+            <LuFilter size={13} className="text-gray-400 ml-1" />
+            {FILTERS.map((f) => (
+              <button
+                key={f.key}
+                onClick={() => setFilter(f.key)}
+                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                  filter === f.key
+                    ? "bg-indigo-500 text-white shadow-sm"
+                    : "text-gray-500 hover:bg-gray-100"
+                }`}
+              >
+                {f.label}
+                <span className={`ml-1 ${
+                  filter === f.key ? "text-indigo-200" : "text-gray-400"
+                }`}>
+                  {f.count}
+                </span>
+              </button>
+            ))}
           </div>
         </div>
 
@@ -192,6 +308,8 @@ const InterviewPrep = () => {
                     onLearnMore={() => generateConceptExplanation(data.question)}
                     isPinned={data?.isPinned}
                     onTogglePin={() => toggleQuestionPinStatus(data._id)}
+                    isDone={data?.isDone}
+                    onToggleDone={() => toggleQuestionDoneStatus(data._id)}
                     index={index}
                   />
 
