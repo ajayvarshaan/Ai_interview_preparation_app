@@ -109,23 +109,32 @@ const InterviewPrep = () => {
   const doneQ    = sessionData?.questions?.filter(q => q.isDone)?.length || 0;
   const progress = totalQ > 0 ? Math.round((doneQ / totalQ) * 100) : 0;
 
-  const filteredQuestions = (sessionData?.questions || [])
-    .filter(q => {
-      const matchSearch = q.question?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchFilter =
-        filter === "all"    ? true :
-        filter === "pinned" ? q.isPinned :
-        filter === "done"   ? q.isDone :
-        filter === "undone" ? !q.isDone : true;
-      return matchSearch && matchFilter;
-    });
-
   const FILTERS = [
-    { key: "all",    label: "All",    count: totalQ },
+    { key: "all", label: "All", count: totalQ },
     { key: "pinned", label: "Pinned", count: pinnedQ },
-    { key: "done",   label: "Done",   count: doneQ },
+    { key: "done", label: "Done", count: doneQ },
     { key: "undone", label: "Undone", count: totalQ - doneQ },
   ];
+
+  const filteredQuestions = (sessionData?.questions || [])
+    .filter((q) => {
+      const matchSearch = (q.question || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+
+      const matchFilter =
+        filter === "all"
+          ? true
+          : filter === "pinned"
+            ? q.isPinned
+            : filter === "done"
+              ? q.isDone
+              : filter === "undone"
+                ? !q.isDone
+                : true;
+
+      return matchSearch && matchFilter;
+    });
 
   return (
     <DashboardLayout>
@@ -292,7 +301,7 @@ const InterviewPrep = () => {
           {/* Questions List */}
           <div className={`col-span-12 transition-all duration-400 ${openLearnMoreDrawer ? "lg:col-span-7" : "lg:col-span-12"}`}>
             <AnimatePresence>
-              {sessionData?.questions?.map((data, index) => (
+              {filteredQuestions.map((data, index) => (
                 <motion.div
                   key={data._id || index}
                   initial={{ opacity: 0, y: 22, scale: 0.98 }}
@@ -313,7 +322,7 @@ const InterviewPrep = () => {
                     index={index}
                   />
 
-                  {!isLoading && sessionData?.questions?.length === index + 1 && (
+                  {!isLoading && filteredQuestions.length === index + 1 && (
                     <motion.div
                       initial={{ opacity: 0, y: 14 }}
                       animate={{ opacity: 1, y: 0 }}
