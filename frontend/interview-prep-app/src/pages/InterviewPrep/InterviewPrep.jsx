@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   LuCircleAlert, LuSparkles, LuX, LuBrain,
-  LuMessageSquare, LuZap, LuSwords, LuDownload,
+  LuZap, LuSwords, LuDownload,
+
   LuSearch, LuFilter,
 } from "react-icons/lu";
 import { exportSessionToPDF } from "../../utils/exportPDF";
@@ -300,6 +302,7 @@ const InterviewPrep = () => {
 
           {/* Questions List */}
           <div className={`col-span-12 transition-all duration-400 ${openLearnMoreDrawer ? "lg:col-span-7" : "lg:col-span-12"}`}>
+
             <AnimatePresence>
               {filteredQuestions.map((data, index) => (
                 <motion.div
@@ -356,17 +359,31 @@ const InterviewPrep = () => {
           {/* Explanation Panel */}
           <AnimatePresence>
             {openLearnMoreDrawer && (
-              <motion.div
-                initial={{ opacity: 0, x: 28, scale: 0.97 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: 28, scale: 0.97 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="col-span-12 lg:col-span-5 panel-anim"
-              >
-                <div className="sticky top-4 rounded-2xl overflow-hidden shadow-xl shadow-indigo-100/60 border border-indigo-100/80">
+              <>
+                {/* Mobile overlay */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="fixed inset-0 bg-black/30 z-40 lg:hidden"
+                  onClick={() => setOpenLearnMoreDrawer(false)}
+                />
 
-                  {/* Panel Header */}
-                  <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 px-5 py-4">
+                <motion.div
+                  initial={{ opacity: 0, y: 18, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 18, scale: 0.98 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="fixed left-0 right-0 bottom-0 z-50 lg:static lg:col-span-5 lg:z-auto panel-anim rounded-t-3xl lg:rounded-2xl"
+                >
+
+                  <div className="sticky top-4 rounded-2xl overflow-hidden shadow-xl shadow-indigo-100/60 border border-indigo-100/80 lg:rounded-2xl lg:border-indigo-100/80">
+                    {/* Panel Header */}
+
+                    <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 px-5 py-4">
+
+
                     <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-violet-500 to-purple-600 opacity-80" style={{ backgroundSize: "200% 100%", animation: "borderFlow 4s ease infinite" }} />
                     <div className="relative flex items-start justify-between gap-3">
                       <div className="flex items-start gap-2.5">
@@ -432,9 +449,11 @@ const InterviewPrep = () => {
                     )}
                   </div>
                 </div>
-              </motion.div>
+                </motion.div>
+              </>
             )}
           </AnimatePresence>
+
         </div>
       </div>
     </DashboardLayout>
