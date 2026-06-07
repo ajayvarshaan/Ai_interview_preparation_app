@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { gsap } from "gsap";
 import {
   LuChevronDown,
   LuPin,
@@ -12,7 +13,6 @@ import AIResponsePreview from "../AIResponsePreview";
 const QuestionCard = ({
   question,
   answer,
-
   onLearnMore,
   isPinned,
   onTogglePin,
@@ -22,6 +22,8 @@ const QuestionCard = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [height, setHeight] = useState(0);
   const contentRef = useRef(null);
+  const cardRef = useRef(null);
+  const answerInnerRef = useRef(null);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -29,9 +31,54 @@ const QuestionCard = ({
     }
   }, [isExpanded]);
 
+  // GSAP card entrance
+  useEffect(() => {
+    if (cardRef.current) {
+      gsap.fromTo(
+        cardRef.current,
+        { opacity: 0, y: 30, scale: 0.95 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          ease: "back.out(1.7)",
+          scrollTrigger: {
+            trigger: cardRef.current,
+            start: "top 90%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+  }, []);
+
+  // GSAP answer expand animation
+  useEffect(() => {
+    if (isExpanded && answerInnerRef.current) {
+      gsap.fromTo(
+        answerInnerRef.current,
+        { opacity: 0, y: -10 },
+        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }
+      );
+    }
+  }, [isExpanded]);
+
+  // GSAP pulse on pin toggle
+  useEffect(() => {
+    if (cardRef.current && isPinned) {
+      gsap.fromTo(
+        cardRef.current,
+        { scale: 1.02, boxShadow: "0 0 20px rgba(251,146,60,0.3)" },
+        { scale: 1, boxShadow: "0 0 0px rgba(251,146,60,0)", duration: 0.5, ease: "power2.out" }
+      );
+    }
+  }, [isPinned]);
+
   return (
     <div
-      className={`relative rounded-2xl mb-4 group transition-all duration-300 overflow-hidden isolation-isolate ${
+      ref={cardRef}
+      className={`relative rounded-2xl mb-4 group transition-all duration-300 overflow-hidden isolation-isolate hover:-translate-y-1 ${
         isDone
           ? "border border-green-200 bg-green-50/40 shadow-sm"
           : isPinned
@@ -41,33 +88,14 @@ const QuestionCard = ({
     >
       <style>{`
         @keyframes pinGlow {
-          0%,100% {
-            box-shadow: 0 0 8px rgba(251,146,60,0.4);
-          }
-          50% {
-            box-shadow: 0 0 16px rgba(251,146,60,0.7);
-          }
+          0%,100% { box-shadow: 0 0 8px rgba(251,146,60,0.4); }
+          50% { box-shadow: 0 0 16px rgba(251,146,60,0.7); }
         }
-
-        @keyframes expandIn {
-          from {
-            opacity: 0;
-            transform: translateY(-6px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .pin-dot {
-          animation: pinGlow 2s ease-in-out infinite;
-        }
-
-        .answer-content {
-          animation: expandIn 0.25s ease forwards;
-        }
+        .pin-dot { animation: pinGlow 2s ease-in-out infinite; }
       `}</style>
+
+      {/* Gradient hover overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-indigo-50/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
       {isPinned && !isDone && (
         <div className="pin-dot absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-orange-400 border-2 border-white flex items-center justify-center z-10">
@@ -151,7 +179,7 @@ const QuestionCard = ({
                 </button>
 
                 <button
-                  className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white rounded-lg bg-gradient-to-r from-violet-500 to-indigo-600 shadow-sm"
+                  className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white rounded-lg bg-gradient-to-r from-violet-500 to-indigo-600 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
                   onClick={() => {
                     setIsExpanded(true);
                     onLearnMore();
@@ -182,7 +210,7 @@ const QuestionCard = ({
             >
               <div ref={contentRef} className="pt-4">
                 {isExpanded && (
-                  <div className="answer-content space-y-4">
+                  <div ref={answerInnerRef} className="space-y-4">
                     <div className="rounded-xl bg-gradient-to-br from-slate-50 to-indigo-50/30 border border-indigo-100/60 p-3 sm:p-4">
                       <AIResponsePreview content={answer} />
                     </div>
@@ -225,7 +253,7 @@ const QuestionCard = ({
             </button>
 
             <button
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 rounded-lg shadow-sm transition-all"
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 rounded-lg shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
               onClick={() => {
                 setIsExpanded(true);
                 onLearnMore();
