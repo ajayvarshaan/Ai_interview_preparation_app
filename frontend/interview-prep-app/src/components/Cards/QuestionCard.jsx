@@ -12,6 +12,7 @@ import AIResponsePreview from "../AIResponsePreview";
 const QuestionCard = ({
   question,
   answer,
+
   onLearnMore,
   isPinned,
   onTogglePin,
@@ -181,7 +182,7 @@ const QuestionCard = ({
             >
               <div ref={contentRef} className="pt-4">
                 {isExpanded && (
-                  <div className="answer-content">
+                  <div className="answer-content space-y-4">
                     <div className="rounded-xl bg-gradient-to-br from-slate-50 to-indigo-50/30 border border-indigo-100/60 p-3 sm:p-4">
                       <AIResponsePreview content={answer} />
                     </div>

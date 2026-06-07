@@ -70,8 +70,36 @@ Evaluate the answer and return a JSON object with the following fields:
 Important: Do NOT add any extra text outside the JSON format. Only return valid JSON.
 `;
 
+const improveAnswerPrompt = (question, userAnswer) => `
+You are an expert technical interviewer and coach.
+
+Task:
+1) Evaluate the candidate's answer.
+2) Produce an improved, corrected, and clearer answer.
+3) Provide a short list of key fixes the candidate should apply.
+4) Provide 3 follow-up practice questions to reinforce understanding.
+
+Inputs:
+Question: "${question}"
+Candidate's Answer: "${userAnswer}"
+
+Return a PURE JSON object in the following format:
+{
+  "score": <number from 0 to 10>,
+  "feedback": "Detailed coaching feedback (what to keep, what to improve, what to add).",
+  "improvedAnswer": "A better version of the answer written clearly and technically.",
+  "keyFixes": ["fix 1", "fix 2", "fix 3"],
+  "followUpQuestions": ["follow up question 1", "follow up question 2", "follow up question 3"]
+}
+
+Important:
+- Do NOT add any extra text outside JSON.
+- Only return valid JSON.
+`;
+
 module.exports = {
   questionAnswerPrompt,
   conceptExplainPrompt,
   evaluateAnswerPrompt,
+  improveAnswerPrompt,
 };

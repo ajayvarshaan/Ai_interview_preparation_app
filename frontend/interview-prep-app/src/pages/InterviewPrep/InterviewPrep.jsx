@@ -109,6 +109,7 @@ const InterviewPrep = () => {
   const totalQ  = sessionData?.questions?.length || 0;
   const pinnedQ  = sessionData?.questions?.filter(q => q.isPinned)?.length || 0;
   const doneQ    = sessionData?.questions?.filter(q => q.isDone)?.length || 0;
+
   const progress = totalQ > 0 ? Math.round((doneQ / totalQ) * 100) : 0;
 
   const FILTERS = [
@@ -239,6 +240,7 @@ const InterviewPrep = () => {
               {doneQ}/{totalQ} completed {progress === 100 && "🎉"}
             </span>
           </div>
+
           <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
             <motion.div
               className={`h-full rounded-full ${
