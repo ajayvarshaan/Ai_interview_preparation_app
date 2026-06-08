@@ -1,4 +1,4 @@
-export const BASE_URL = "https://ai-interview-preparation-app-1.onrender.com";
+export const BASE_URL = "https://ai-interview-preparation-app.onrender.com";
 
 
 
