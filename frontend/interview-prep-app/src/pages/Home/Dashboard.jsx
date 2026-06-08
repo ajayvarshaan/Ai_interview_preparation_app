@@ -111,6 +111,155 @@ const AnimatedStatCard = ({ icon, label, value, color = "text-orange-400" }) => 
   </div>
 );
 
+const ProgressDonut = ({ percent, size = 160, stroke = 12, label, detail }) => {
+  const safePercent = Math.max(0, Math.min(100, percent));
+  const radius = (size - stroke) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const dashOffset = circumference - (safePercent / 100) * circumference;
+
+  const ringRef = useRef(null);
+  const countRef = useRef(null);
+
+  useEffect(() => {
+    if (!ringRef.current) return;
+    const el = ringRef.current;
+    gsap.fromTo(
+      el,
+      { strokeDashoffset: circumference },
+      {
+        strokeDashoffset: dashOffset,
+        duration: 1.4,
+        ease: "power2.out",
+      }
+    );
+
+    if (countRef.current) {
+      const start = 0;
+      const end = safePercent;
+      gsap.fromTo(
+        countRef.current,
+        { textContent: start.toString() },
+        {
+          textContent: end.toString(),
+          duration: 1.2,
+          ease: "power2.out",
+          snap: { textContent: 1 },
+          onUpdate: () => {
+            // nothing: gsap updates textContent
+          },
+        }
+      );
+    }
+  }, [safePercent, dashOffset, circumference]);
+
+  return (
+    <div className="relative flex items-center justify-center">
+      <svg width={size} height={size} className="block" style={{ overflow: 'visible' }}>
+
+        <defs>
+          <linearGradient id="progress-gradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#fb923c" />
+            <stop offset="50%" stopColor="#fbbf24" />
+            <stop offset="100%" stopColor="#f97316" />
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* Background ring */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="transparent"
+          stroke="rgba(255,255,255,0.12)"
+          strokeWidth={stroke}
+        />
+
+        {/* Animated ring */}
+        <circle
+          ref={ringRef}
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="transparent"
+          stroke="url(#progress-gradient)"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          filter="url(#glow)"
+        />
+      </svg>
+
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <div className="text-3xl font-extrabold text-gray-900">
+          <span ref={countRef}>{Math.round(safePercent)}</span>
+          <span className="text-base font-bold text-gray-700">%</span>
+        </div>
+        <div className="text-xs text-gray-600 mt-1">{label}</div>
+        {detail ? <div className="text-[11px] text-gray-500 mt-2 text-center px-3">{detail}</div> : null}
+      </div>
+    </div>
+  );
+};
+
+const StackedProgressBar = ({ done, total }) => {
+  const safeTotal = Math.max(0, total);
+  const safeDone = Math.max(0, Math.min(safeTotal, done));
+  const remaining = Math.max(0, safeTotal - safeDone);
+
+  const donePct = safeTotal > 0 ? (safeDone / safeTotal) * 100 : 0;
+  const remainingPct = 100 - donePct;
+
+  const doneFillRef = useRef(null);
+
+  useEffect(() => {
+    if (!doneFillRef.current) return;
+    gsap.fromTo(
+      doneFillRef.current,
+      { width: "0%" },
+      { width: `${donePct}%`, duration: 1.2, ease: "power2.out" }
+    );
+  }, [donePct]);
+
+  return (
+    <div className="w-full">
+      <div className="flex items-center justify-between text-xs mb-2">
+        <span className="text-gray-600">Completed</span>
+        <span className="font-semibold text-gray-900">
+          {safeDone}/{safeTotal}
+        </span>
+      </div>
+
+      <div className="h-3.5 rounded-full bg-gray-100 border border-gray-200 overflow-hidden">
+        <div
+          ref={doneFillRef}
+          className="h-full rounded-full bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500"
+          style={{ width: "0%" }}
+        />
+        {/* Remaining overlay */}
+        <div
+          className="-mt-3.5 h-3.5 bg-gray-200/70 border-t border-gray-200"
+          style={{ width: `${remainingPct}%`, marginLeft: `${donePct}%` }}
+        />
+      </div>
+
+      <div className="flex items-center justify-between text-[11px] mt-2">
+        <span className="text-gray-500">Remaining</span>
+        <span className="text-gray-700">{remaining}</span>
+      </div>
+    </div>
+  );
+};
+
+
 const LoadingSkeleton = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {[1, 2, 3].map((i) => (
@@ -504,26 +653,115 @@ const Dashboard = () => {
         <GSAPReveal delay={0.2}>
           <div
             ref={statsRef}
-            className="mt-12 p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl border border-orange-100"
+            className="mt-12 p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl border border-orange-100 relative overflow-hidden"
           >
+            <div
+              className="absolute inset-0 opacity-60 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(circle at 20% 20%, rgba(249,115,22,0.35), transparent 45%), radial-gradient(circle at 80% 60%, rgba(245,158,11,0.25), transparent 50%)",
+              }}
+            />
             <h3 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
               <span className="text-orange-500"><LuAward /></span>
               Your Progress Summary
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { label: "Sessions", value: sessions.length, icon: LuBookOpen },
-                { label: "Questions", value: totalQuestions, icon: LuBrain },
-                { label: "Completed", value: doneQuestions, icon: LuCheck },
-                { label: "Roles", value: rolesCovered, icon: LuTarget },
-              ].map((stat, i) => (
-                <div key={i} className="bg-white/70 backdrop-blur-sm rounded-xl p-4 text-center shadow-sm hover:shadow-md transition-shadow group">
-                  <stat.icon className="text-orange-400 text-lg mx-auto mb-1 group-hover:scale-110 group-hover:rotate-6 transition-transform" />
-                  <div className="text-xl font-bold text-gray-800">{stat.value}</div>
-                  <div className="text-xs text-gray-400">{stat.label}</div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+              <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/60 p-5 shadow-sm">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="text-xs text-gray-500">Progress complete</div>
+                    <div className="text-2xl font-extrabold text-gray-900">
+                      {completionRate}%
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {doneQuestions} of {totalQuestions} questions completed
+                    </div>
+                  </div>
+                  <div className="hidden sm:block">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-3 py-1.5 border border-orange-100">
+                      <LuCheck className="text-orange-500" />
+                      <span className="text-xs font-semibold text-orange-700">{doneQuestions} done</span>
+                    </div>
+                  </div>
                 </div>
-              ))}
+
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                  <div className="flex justify-center">
+                    <ProgressDonut
+                      percent={completionRate}
+                      label="Completed"
+                      detail={totalQuestions > 0 ? `${doneQuestions}/${totalQuestions}` : "0/0"}
+                    />
+                  </div>
+
+                  <div>
+                    <StackedProgressBar done={doneQuestions} total={totalQuestions} />
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <div className="inline-flex items-center gap-2 text-[11px] bg-gray-100/70 rounded-full px-3 py-1.5 border border-gray-200">
+                        <span className="w-2 h-2 rounded-full bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500" />
+                        Completed
+                      </div>
+                      <div className="inline-flex items-center gap-2 text-[11px] bg-gray-100/70 rounded-full px-3 py-1.5 border border-gray-200">
+                        <span className="w-2 h-2 rounded-full bg-gray-300" />
+                        Remaining
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+                  {[
+                    { label: "Sessions", value: sessions.length, icon: LuBookOpen },
+                    { label: "Questions", value: totalQuestions, icon: LuBrain },
+                    { label: "Completed", value: doneQuestions, icon: LuCheck },
+                    { label: "Roles", value: rolesCovered, icon: LuTarget },
+                  ].map((stat, i) => (
+                    <div
+                      key={i}
+                      className="relative overflow-hidden bg-white/75 backdrop-blur-sm rounded-xl p-4 text-center shadow-sm hover:shadow-md transition-all group border border-white/60"
+                    >
+                      <div
+                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        style={{
+                          background:
+                            "radial-gradient(circle at 30% 20%, rgba(249,115,22,0.22), transparent 55%), radial-gradient(circle at 80% 80%, rgba(245,158,11,0.18), transparent 55%)",
+                        }}
+                      />
+
+                      <div className="relative">
+                        <div className="flex items-center justify-center mb-1">
+                          <stat.icon className="text-orange-500 text-lg mx-auto group-hover:scale-110 group-hover:rotate-6 transition-transform" />
+                        </div>
+                        <div className="text-xl font-extrabold text-gray-800 tracking-tight">
+                          {stat.value}
+                        </div>
+                        <div className="text-xs text-gray-400">{stat.label}</div>
+                      </div>
+
+                      <div className="pointer-events-none absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-24 rounded-full bg-orange-400/10 blur-2xl" />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-5 bg-white/70 backdrop-blur-sm rounded-2xl border border-white/60 p-5 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm font-semibold text-gray-800">Next milestone</div>
+                    <div className="text-xs text-gray-500">Based on your completion</div>
+                  </div>
+                  <div className="mt-3 text-xs text-gray-600">
+                    {totalQuestions > 0
+                      ? (completionRate >= 100
+                        ? 'You’ve completed everything 🎉'
+                        : `Aim for ${Math.min(100, Math.ceil(completionRate / 10) * 10 + 10)}% next`)
+                      : 'Create a session to start tracking progress.'}
+                  </div>
+                </div>
+              </div>
             </div>
+
           </div>
         </GSAPReveal>
       </>

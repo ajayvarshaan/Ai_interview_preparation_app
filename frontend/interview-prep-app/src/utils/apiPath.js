@@ -1,4 +1,7 @@
-export const BASE_URL = "https://ai-interview-preparation-app.onrender.com";
+export const BASE_URL = "http://localhost:8000";
+
+
+
 
 export const API_PATHS = {
   AUTH: {
@@ -16,6 +19,7 @@ export const API_PATHS = {
     GENERATE_EXPLANATION: "/api/ai/generate-explanation",
     EVALUATE_ANSWER: "/api/ai/evaluate-answer",
     IMPROVE_ANSWER: "/api/ai/improve-answer",
+    CLARIFY_DOUBT: "/api/ai/clarify-doubt",
   },
 
   SESSION: {

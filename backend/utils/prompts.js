@@ -97,9 +97,35 @@ Important:
 - Only return valid JSON.
 `;
 
+const clarifyDoubtPrompt = ({ sessionId, questionContext, userMessage }) => `
+You are an AI tutor for interview preparation.
+
+Task:
+- Clarify the user's doubt in a beginner-friendly way.
+- If needed, provide a small example (code or pseudo-code).
+- Keep the response concise but useful.
+- Always answer directly.
+
+Context:
+- SessionId: ${sessionId || "(not provided)"}
+- Related context: ${questionContext || "(none)"}
+
+User doubt:
+${userMessage}
+
+Return a PURE JSON object in this format:
+{
+  "answer": "..."
+}
+
+Important: Do NOT add extra text outside JSON.
+`;
+
 module.exports = {
   questionAnswerPrompt,
   conceptExplainPrompt,
   evaluateAnswerPrompt,
   improveAnswerPrompt,
+  clarifyDoubtPrompt,
 };
+

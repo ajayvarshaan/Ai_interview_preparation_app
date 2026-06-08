@@ -5,6 +5,7 @@ const {
   questionAnswerPrompt,
   evaluateAnswerPrompt,
   improveAnswerPrompt,
+  clarifyDoubtPrompt,
 } = require("../utils/prompts");
 
 const ai = new GoogleGenAI({
@@ -81,7 +82,6 @@ const generateConceptExplanation = async (req, res) => {
   }
 };
 
-
 const evaluateAnswer = async (req, res) => {
   try {
     const { question, userAnswer } = req.body;
@@ -107,7 +107,6 @@ const evaluateAnswer = async (req, res) => {
     });
   }
 };
-
 
 const improveAnswer = async (req, res) => {
   try {
@@ -152,9 +151,37 @@ const improveAnswer = async (req, res) => {
   }
 };
 
+const clarifyDoubt = async (req, res) => {
+  try {
+    const { sessionId, questionContext, userMessage } = req.body;
+
+    if (!userMessage) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const prompt = clarifyDoubtPrompt({ sessionId, questionContext, userMessage });
+
+    const response = await generateWithRetry({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
+
+    const data = JSON.parse(cleanJSON(response.text));
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error("Gemini Error:", error);
+    return res.status(500).json({
+      message: "Failed to clarify doubt",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   generateInterviewQuestions,
   generateConceptExplanation,
   evaluateAnswer,
   improveAnswer,
+  clarifyDoubt,
 };
+

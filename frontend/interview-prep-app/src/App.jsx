@@ -8,6 +8,7 @@ import Dashboard from "./pages/Home/Dashboard";
 import InterviewPrep from "./pages/InterviewPrep/InterviewPrep";
 import MockInterview from "./pages/InterviewPrep/MockInterview";
 import UserProvider from "./context/userContext";
+import ChatBox from "./components/ChatBox/ChatBox";
 
 const App = () => {
   return (
@@ -24,6 +25,8 @@ const App = () => {
           <Route path="/mock-interview/:sessionId" element={<MockInterview />} />
         </Routes>
       </Router>
+
+      <ChatBox />
 
       <Toaster
         toastOptions={{          className: "",

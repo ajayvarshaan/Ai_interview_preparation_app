@@ -15,7 +15,9 @@ const {
   generateConceptExplanation,
   evaluateAnswer,
   improveAnswer,
+  clarifyDoubt,
 } = require("./controller/aiController");
+
 
 const app = express();
 
@@ -41,6 +43,7 @@ app.use("/api/ai/generate-questions", protect, generateInterviewQuestions);
 app.use("/api/ai/generate-explanation", protect, generateConceptExplanation);
 app.post("/api/ai/evaluate-answer", protect, evaluateAnswer);
 app.post("/api/ai/improve-answer", protect, improveAnswer);
+app.post("/api/ai/clarify-doubt", protect, clarifyDoubt);
 
 // Serve uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
