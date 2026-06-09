@@ -39,7 +39,6 @@ export const APP_FEATURES = [
 ];
 
 
-// Sample Answer Format (for reference)
 export const SAMPLE_ANSWER = `\`var\`, \`let\`, and \`const\` are used to declare variables in JavaScript, but they have different scopes and behaviors.
 
 • **\`var\`**: \`var\` has function-scoped or global scope. This means a variable declared with \`var\` inside a function is only accessible inside that function. If declared outside any function, it's a global variable.
@@ -62,7 +61,6 @@ arr.push(4); // This works
 arr = [5, 6]; // Error: Assignment to constant variable
 \`\`\``;
 
-// Alternative format - inline code examples (like Props vs State screenshot)
 export const SAMPLE_ANSWER_INLINE = `**Props** (short for properties) are used to pass data from a parent component to a child component. They are read-only, meaning a child component cannot directly modify the props it receives; they are immutable. **State**, on the other hand, is data that is managed within a component itself. It is mutable, meaning it can be changed over time, usually in response to user actions or network requests. When \`state\` changes, React re-renders the component and its children that depend on that state.
 
 **Props Example:** jsx // ParentComponent.js function ParentComponent() { const userName = "Alice"; return <ChildComponent name={userName} />; }

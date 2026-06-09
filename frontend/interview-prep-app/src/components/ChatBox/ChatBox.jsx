@@ -203,12 +203,14 @@ const ChatBox = () => {
       <div
         ref={backdropRef}
         className="fixed inset-0 bg-black/40 backdrop-blur-xs z-[9998] lg:hidden"
+        style={{ display: isOpen ? "block" : "none" }}
         onClick={() => setIsOpen(false)}
       />
 
       {/* Main Chat Interface Container */}
       <div
         ref={chatWindowRef}
+        style={{ display: isOpen ? "flex" : "none" }}
         className="fixed bottom-24 right-6 z-[9999] w-[390px] max-w-[calc(100vw-2rem)] h-[620px] max-h-[calc(100vh-140px)] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden flex flex-col"
       >
         {/* Animated Gradient Header */}

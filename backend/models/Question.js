@@ -9,7 +9,6 @@ const questionSchema = new mongoose.Schema(
     isPinned: { type: Boolean, default: false },
     isDone: { type: Boolean, default: false },
 
-    // AI Answer Coaching (Improve My Answer)
     coachingScore: { type: Number, default: null },
     coachingFeedback: { type: String, default: "" },
     coachingImprovedAnswer: { type: String, default: "" },

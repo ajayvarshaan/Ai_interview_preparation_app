@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Model from "../components/Model";
 import Login from "./Auth/Login";
 import SignUp from "./Auth/SignUp";
-import inter from "../assets/inter.png";
+import interAI from "../assets/interAI.png";
 import { APP_FEATURES } from "../utils/data";
 import { UserContext } from "../context/userContext";
 import ProfileInfoCard from "../components/Cards/ProfileInfoCard";
@@ -292,7 +292,7 @@ const LandingPage = () => {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.3]);
 
   useEffect(() => {
-    // GSAP Hero heading parallax text effect
+    
     if (headingRef.current) {
       const chars = headingRef.current.querySelectorAll(".gsap-char");
       gsap.fromTo(
@@ -310,7 +310,7 @@ const LandingPage = () => {
       );
     }
 
-    // GSAP Hero image float effect
+  
     if (heroImageRef.current) {
       gsap.to(heroImageRef.current, {
         y: -15,
@@ -321,7 +321,7 @@ const LandingPage = () => {
       });
     }
 
-    // GSAP CTA section parallax
+  
     if (ctaSectionRef.current) {
       gsap.fromTo(
         ctaSectionRef.current,
@@ -379,7 +379,7 @@ const LandingPage = () => {
       <ParticleField />
       <FloatingIcons />
 
-      {/* Animated Background Gradient Orbs - hidden on small screens */}
+
       <div className="hidden md:block fixed inset-0 -z-20 overflow-hidden pointer-events-none">
         <motion.div
           animate={{
@@ -409,7 +409,6 @@ const LandingPage = () => {
         />
       </div>
 
-      {/* NAVBAR */}
       <motion.header
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -450,11 +449,10 @@ const LandingPage = () => {
         </div>
       </motion.header>
 
-      {/* HERO SECTION */}
       <section ref={heroRef} className="relative">
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="flex flex-col md:flex-row items-center justify-between px-4 md:px-16 py-10 md:py-24 gap-8 md:gap-12">
           
-          {/* Left Content */}
+  
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -478,7 +476,6 @@ const LandingPage = () => {
               AI-Powered Interview Preparation
             </motion.div>
 
-            {/* Heading with GSAP word animation */}
             <h1
               ref={headingRef}
               className="text-4xl md:text-6xl font-extrabold leading-tight mb-6 tracking-tight text-gray-900"
@@ -505,7 +502,6 @@ const LandingPage = () => {
               From preparation to mastery — your ultimate interview toolkit.
             </motion.p>
 
-            {/* Floating Stats */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -560,7 +556,6 @@ const LandingPage = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right - Hero Image */}
           <motion.div
             initial={{ x: 100, opacity: 0, scale: 0.9 }}
             animate={{ x: 0, opacity: 1, scale: 1 }}
@@ -568,7 +563,7 @@ const LandingPage = () => {
             className="w-full md:w-[48%] flex justify-center"
           >
             <div ref={heroImageRef} className="relative">
-              {/* Glow behind image */}
+            
               <motion.div
                 animate={{
                   scale: [1, 1.1, 1],
@@ -578,7 +573,7 @@ const LandingPage = () => {
                 className="absolute inset-0 bg-gradient-to-r from-orange-400 to-yellow-400 rounded-3xl blur-3xl"
               />
 
-              {/* Decorative rings */}
+           
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
@@ -593,7 +588,7 @@ const LandingPage = () => {
               <div className="relative bg-white/60 backdrop-blur-md border border-orange-100 rounded-3xl p-4 shadow-2xl">
                 <div className="bg-gradient-to-br from-[#fff8ee] to-[#fdefd8] rounded-2xl p-5">
                   <motion.img
-                    src={inter}
+                    src={interAI}
                     alt="Interview"
                     className="w-full rounded-xl shadow-md"
                     whileHover={{ scale: 1.02 }}
@@ -601,7 +596,6 @@ const LandingPage = () => {
                   />
                 </div>
 
-                {/* Floating badge */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
