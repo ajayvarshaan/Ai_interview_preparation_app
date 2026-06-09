@@ -35,4 +35,11 @@ export const API_PATHS = {
     DONE: (id) => `/api/questions/${id}/done`,
     UPDATE_NOTE: (id) => `/api/questions/${id}/note`,
   },
+
+  LANDING: {
+    STATS: "/api/landing/stats",
+    FEATURES: "/api/landing/features",
+    TESTIMONIALS: "/api/landing/testimonials",
+  },
 };
+
