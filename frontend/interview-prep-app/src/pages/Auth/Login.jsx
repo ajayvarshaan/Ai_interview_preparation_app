@@ -39,7 +39,6 @@ const Login = ({ setCurrentPage }) => {
   const particlesRef = useRef(null);
   const shineRef = useRef(null);
 
-  // Magnetic button handler
   const handleMouseMove = useCallback((e) => {
     const btn = buttonRef.current;
     if (!btn || isLoading) return;
@@ -55,18 +54,15 @@ const Login = ({ setCurrentPage }) => {
     gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.4)" });
   }, []);
 
-  // Entrance animation
   useEffect(() => {
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    // Card entrance
     tl.fromTo(
       cardRef.current,
       { opacity: 0, scale: 0.9, y: 40, rotateX: 5 },
       { opacity: 1, scale: 1, y: 0, rotateX: 0, duration: 0.7 }
     );
 
-    // Glow pulse
     tl.fromTo(
       glowRef.current,
       { opacity: 0, scale: 0.8 },
@@ -74,7 +70,6 @@ const Login = ({ setCurrentPage }) => {
       "-=0.4"
     );
 
-    // Header stagger
     tl.fromTo(
       headerRef.current?.children,
       { opacity: 0, y: 25, rotationX: -10 },
@@ -82,14 +77,12 @@ const Login = ({ setCurrentPage }) => {
       "-=0.3"
     );
 
-    // Floating elements
     floatRefs.current.forEach((el) => {
       if (el) {
         tl.fromTo(el, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.4 }, "-=0.5");
       }
     });
 
-    // Fields
     tl.fromTo(
       emailRef.current,
       { opacity: 0, x: -30, scale: 0.97 },
@@ -103,7 +96,6 @@ const Login = ({ setCurrentPage }) => {
       "-=0.35"
     );
 
-    // Button
     tl.fromTo(
       buttonRef.current,
       { opacity: 0, y: 25, scale: 0.9 },
@@ -111,7 +103,6 @@ const Login = ({ setCurrentPage }) => {
       "-=0.3"
     );
 
-    // Switch text
     tl.fromTo(
       switchRef.current,
       { opacity: 0 },
@@ -119,7 +110,6 @@ const Login = ({ setCurrentPage }) => {
       "-=0.2"
     );
 
-    // Continuous floating
     floatRefs.current.forEach((el, i) => {
       if (el && FLOATING_EL[i]) {
         gsap.to(el, {
@@ -135,7 +125,6 @@ const Login = ({ setCurrentPage }) => {
       }
     });
 
-    // Glow continuous
     if (glowRef.current) {
       gsap.to(glowRef.current, {
         scale: 1.2,
@@ -147,7 +136,6 @@ const Login = ({ setCurrentPage }) => {
       });
     }
 
-    // Button shine
     if (shineRef.current) {
       gsap.to(shineRef.current, {
         x: "200%",
@@ -158,7 +146,6 @@ const Login = ({ setCurrentPage }) => {
       });
     }
 
-    // Particles
     if (particlesRef.current) {
       const dots = particlesRef.current.children;
       gsap.fromTo(
@@ -180,7 +167,6 @@ const Login = ({ setCurrentPage }) => {
     };
   }, []);
 
-  // Error animation
   useEffect(() => {
     if (error && errorRef.current) {
       gsap.fromTo(
@@ -188,7 +174,6 @@ const Login = ({ setCurrentPage }) => {
         { opacity: 0, y: -8, scale: 0.95, x: -3 },
         { opacity: 1, y: 0, scale: 1, x: 0, duration: 0.4, ease: "back.out(2)" }
       );
-      // Shake effect
       gsap.fromTo(
         cardRef.current,
         { x: -4 },
@@ -223,7 +208,6 @@ const Login = ({ setCurrentPage }) => {
       if (token) {
         localStorage.setItem("token", token);
         updateUser(response.data);
-        // Success animation
         if (cardRef.current) {
           gsap.to(cardRef.current, {
             scale: 1.03,
@@ -245,6 +229,8 @@ const Login = ({ setCurrentPage }) => {
   };
 
   const switchPage = (page) => {
+    if (typeof setCurrentPage !== "function") return;
+
     if (containerRef.current) {
       gsap.to(cardRef.current, {
         opacity: 0,
@@ -261,11 +247,9 @@ const Login = ({ setCurrentPage }) => {
 
   return (
     <div ref={containerRef} className="relative w-full overflow-hidden">
-      {/* ===== BACKGROUND ORBS ===== */}
       <div ref={glowRef} className="absolute -top-16 -right-16 w-40 h-40 bg-gradient-to-br from-orange-400/25 to-yellow-300/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-gradient-to-tr from-purple-400/15 to-orange-300/15 rounded-full blur-3xl pointer-events-none" />
 
-      {/* ===== FLOATING ICONS ===== */}
       {FLOATING_EL.map((item, i) => (
         <div
           key={i}
@@ -277,7 +261,6 @@ const Login = ({ setCurrentPage }) => {
         </div>
       ))}
 
-      {/* ===== PARTICLES ===== */}
       <div ref={particlesRef} className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         {Array.from({ length: 8 }).map((_, i) => (
           <div
@@ -288,13 +271,11 @@ const Login = ({ setCurrentPage }) => {
         ))}
       </div>
 
-      {/* ===== MAIN CARD ===== */}
       <div
         ref={cardRef}
         className="relative z-10 w-full bg-white/60 backdrop-blur-xl rounded-2xl border border-white/40 shadow-xl p-7"
         style={{ perspective: 1000 }}
       >
-        {/* ===== HEADER ===== */}
         <div ref={headerRef} className="mb-6 text-center">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-400 rounded-xl shadow-lg shadow-orange-200/50 mb-3">
             <LuSparkles className="text-white text-lg" />
@@ -303,9 +284,7 @@ const Login = ({ setCurrentPage }) => {
           <p className="text-sm text-gray-400 mt-1">Sign in to continue your journey</p>
         </div>
 
-        {/* ===== FORM ===== */}
         <form onSubmit={handleLogin} className="flex flex-col gap-1">
-          {/* Email */}
           <div ref={emailRef}>
             <Input
               value={email}
@@ -318,7 +297,6 @@ const Login = ({ setCurrentPage }) => {
             />
           </div>
 
-          {/* Password */}
           <div ref={passwordRef} className="relative">
             <Input
               value={password}
@@ -339,14 +317,16 @@ const Login = ({ setCurrentPage }) => {
             </button>
           </div>
 
-          {/* Forgot Password */}
           <div className="flex justify-end -mt-1 mb-1">
-            <button type="button" className="text-xs text-orange-500 hover:text-orange-600 font-medium transition-all hover:underline underline-offset-2">
+            <button
+              type="button"
+              className="text-xs text-orange-500 hover:text-orange-600 font-medium transition-all hover:underline underline-offset-2"
+              // onClick={() => navigate("/forgot-password")}
+            >
               Forgot password?
             </button>
           </div>
 
-          {/* Error */}
           {error && (
             <div ref={errorRef} className="mb-2">
               <div className="flex items-center gap-2.5 bg-red-50/80 backdrop-blur-sm border border-red-200/60 text-red-600 text-xs px-4 py-3 rounded-xl">
@@ -356,7 +336,6 @@ const Login = ({ setCurrentPage }) => {
             </div>
           )}
 
-          {/* Submit */}
           <div
             ref={buttonRef}
             onMouseMove={handleMouseMove}
@@ -368,13 +347,11 @@ const Login = ({ setCurrentPage }) => {
               disabled={isLoading}
               className="relative w-full bg-gradient-to-r from-orange-500 via-orange-400 to-orange-500 hover:from-orange-600 hover:via-orange-500 hover:to-orange-600 text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-orange-200/60 transition-all duration-300 overflow-hidden group"
             >
-              {/* Shine sweep */}
               <div
                 ref={shineRef}
                 className="absolute inset-0 -skew-x-12 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent"
               />
 
-              {/* Ripple rings */}
               <span className="absolute inset-0 rounded-xl border-2 border-white/20 animate-ping opacity-20" />
 
               {isLoading ? (
@@ -394,7 +371,7 @@ const Login = ({ setCurrentPage }) => {
             </button>
           </div>
 
-          {/* Switch */}
+     
           <div ref={switchRef} className="text-center mt-4 pt-3 border-t border-gray-100">
             <p className="text-sm text-gray-400">
               Don't have an account?{" "}

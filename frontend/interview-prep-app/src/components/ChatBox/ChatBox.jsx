@@ -2,11 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { Flip } from "gsap/Flip";
 
-// (Optional) register Flip if available in your gsap build.
+
 try {
   gsap.registerPlugin(Flip);
 } catch {
-  // ignore
+
 }
 import {
   LuMessageCircle,
@@ -43,7 +43,7 @@ const ChatBox = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showQuickQ, setShowQuickQ] = useState(true);
 
-  // DOM Refs for GSAP
+
   const buttonRef = useRef(null);
   const chatWindowRef = useRef(null);
   const backdropRef = useRef(null);
@@ -51,7 +51,7 @@ const ChatBox = () => {
   const inputRef = useRef(null);
   const timelineRef = useRef(null);
 
-  // 1. Continuous Floating Button Breath Effect
+
   useEffect(() => {
     const floatAnim = gsap.to(buttonRef.current, {
       y: "-=6",
@@ -64,7 +64,6 @@ const ChatBox = () => {
     return () => floatAnim.kill();
   }, []);
 
-  // 2. Initialize Main Open/Close GSAP Timeline
   useEffect(() => {
     gsap.set(chatWindowRef.current, { scale: 0.85, opacity: 0, y: 40, pointerEvents: "none" });
     gsap.set(backdropRef.current, { opacity: 0, display: "none" });
@@ -86,13 +85,12 @@ const ChatBox = () => {
           y: 0,
           pointerEvents: "auto",
           duration: 0.45,
-          ease: "back.out(1.4)", // Elastic snap-in effect
+          ease: "back.out(1.4)", 
         },
         "-=0.1"
       );
   }, []);
 
-  // Trigger timeline based on open state
   useEffect(() => {
     if (isOpen) {
       timelineRef.current.play();
@@ -102,7 +100,6 @@ const ChatBox = () => {
     }
   }, [isOpen]);
 
-  // 3. Staggered Entrance for Quick Questions
   useEffect(() => {
     if (isOpen && showQuickQ && messages.length === 1) {
       gsap.fromTo(
@@ -121,7 +118,6 @@ const ChatBox = () => {
     }
   }, [isOpen, showQuickQ, messages]);
 
-  // 4. Smooth Inward Pop for New Messages & Auto Scroll
   useEffect(() => {
     const lastMessage = document.querySelector(".chat-message-item:last-child");
     if (lastMessage) {

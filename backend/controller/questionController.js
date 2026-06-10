@@ -57,7 +57,7 @@ exports.toggleDoneQuestion = async (req, res) => {
   }
 };
 
-// @access  Private
+
 exports.updateQuestionNote = async (req, res) => {
   try {
     const { note } = req.body;

@@ -22,7 +22,7 @@ const {
 
 const app = express();
 
-// Middleware to handle CORS
+
 app.use(
   cors({
     origin: "*",
@@ -32,10 +32,10 @@ app.use(
 );
 
 connectDB();
-// Middleware
+
 app.use(express.json());
 
-// Routes
+
 app.use("/api/auth", authRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/questions", questionRoutes);
@@ -47,9 +47,9 @@ app.post("/api/ai/evaluate-answer", protect, evaluateAnswer);
 app.post("/api/ai/improve-answer", protect, improveAnswer);
 app.post("/api/ai/clarify-doubt", protect, clarifyDoubt);
 
-// Serve uploads folder
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Start Server
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

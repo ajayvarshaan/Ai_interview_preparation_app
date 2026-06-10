@@ -145,7 +145,7 @@ const ProgressDonut = ({ percent, size = 160, stroke = 12, label, detail }) => {
           ease: "power2.out",
           snap: { textContent: 1 },
           onUpdate: () => {
-            // nothing: gsap updates textContent
+          
           },
         }
       );
@@ -357,11 +357,10 @@ const Dashboard = () => {
     setTimeout(() => setVisible(true), 100);
   }, []);
 
-  // GSAP animations on mount
+
   useEffect(() => {
     if (!visible) return;
 
-    // Heading word stagger
     if (headingRef.current) {
       const words = headingRef.current.querySelectorAll('.gsap-word');
       gsap.fromTo(
@@ -379,7 +378,7 @@ const Dashboard = () => {
       );
     }
 
-    // Hero image float
+  
     if (heroImageRef.current) {
       gsap.to(heroImageRef.current, {
         y: -12,
@@ -391,7 +390,7 @@ const Dashboard = () => {
       });
     }
 
-    // Sessions grid stagger
+
     if (sessionsGridRef.current && sessionsGridRef.current.children.length > 0) {
       gsap.fromTo(
         sessionsGridRef.current.children,
@@ -412,7 +411,7 @@ const Dashboard = () => {
       );
     }
 
-    // FAB entrance
+
     gsap.fromTo(".fab-button", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, delay: 1.5, ease: "back.out(2)" });
 
     return () => {

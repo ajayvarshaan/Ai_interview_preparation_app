@@ -4,10 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LuTimer, LuChevronRight, LuBrain, LuCircleCheck,
   LuCircleX, LuArrowLeft, LuSparkles, LuTrendingUp,
-  LuCircleAlert, LuRefreshCw,
+  LuCircleAlert, LuRefreshCw, LuMic, LuMicOff,
 } from "react-icons/lu";
 import DashboardLayout from "../../components/Layouts/DashboardLayout";
 import SpinnerLoader from "../../components/Loader/SpinnerLoader";
+import useVoiceToText from "../../hooks/useVoiceToText";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPath";
 import toast from "react-hot-toast";
@@ -62,6 +63,21 @@ const MockInterview = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [started, setStarted] = useState(false);
   const timerRef = useRef(null);
+
+  const {
+    isListening: isMicListening,
+    transcript: voiceTranscript,
+    isSupported: isMicSupported,
+    startListening: startMic,
+    stopListening: stopMic,
+  } = useVoiceToText();
+
+  // Sync voice transcript to userAnswer
+  useEffect(() => {
+    if (voiceTranscript) {
+      setUserAnswer(voiceTranscript);
+    }
+  }, [voiceTranscript]);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -352,15 +368,70 @@ const MockInterview = () => {
             </div>
 
             <div className="px-6 py-5">
-              <label className="text-xs font-semibold text-gray-500 mb-2 block">Your Answer</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-semibold text-gray-500">Your Answer</label>
+                {isMicSupported ? (
+                  isMicListening ? (
+                    <motion.button
+                      type="button"
+                      onClick={stopMic}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-semibold bg-red-500 text-white border border-red-400 shadow-md shadow-red-200/50 transition-all"
+                    >
+                      <span className="relative flex w-2.5 h-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white" />
+                      </span>
+                      Stop Recording
+                    </motion.button>
+                  ) : (
+                    <motion.button
+                      type="button"
+                      onClick={startMic}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border bg-gray-50 border-gray-200 text-gray-500 hover:bg-orange-50 hover:border-orange-200 hover:text-orange-600"
+                    >
+                      <LuMic size={14} />
+                      Voice
+                    </motion.button>
+                  )
+                ) : (
+                  <span className="text-[10px] text-gray-300 italic">Voice input not supported in this browser</span>
+                )}
+              </div>
               <textarea
                 value={userAnswer}
                 onChange={(e) => setUserAnswer(e.target.value)}
-                placeholder="Type your answer here..."
+                placeholder="Type or speak your answer here..."
                 rows={6}
                 disabled={isEvaluating}
                 className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent resize-none transition disabled:opacity-50 disabled:bg-gray-50"
               />
+              {isMicListening && (
+                <div className="mt-2 flex items-center justify-between bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <span className="relative flex w-3 h-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-60" />
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+                    </span>
+                    <span className="text-sm font-medium text-red-600">Recording...</span>
+                  </div>
+                  <motion.button
+                    type="button"
+                    onClick={stopMic}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition-all border border-red-200"
+                  >
+                    <LuMicOff size={12} />
+                    Stop
+                  </motion.button>
+                </div>
+              )}
 
               <motion.button
                 whileHover={{ scale: 1.02 }}

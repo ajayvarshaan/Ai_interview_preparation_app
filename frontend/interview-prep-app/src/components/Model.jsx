@@ -13,7 +13,7 @@ const Model = ({ children, isOpen, onClose, title, hideHeader }) => {
         { opacity: 1, rotation: 0, scale: 1, duration: 0.5, delay: 0.4, ease: "elastic.out(1, 0.6)" }
       );
 
-      // Hover animation
+    
       closeRef.current.addEventListener("mouseenter", () => {
         gsap.to(closeRef.current, {
           rotation: 90,

@@ -435,7 +435,7 @@ const LandingPage = () => {
         );
       }
 
-      // Animate the testimonial cards area
+     
       if (testimonialAreaRef.current) {
         const featuredCard = testimonialAreaRef.current.querySelector(".testimonial-featured");
         const otherCards = testimonialAreaRef.current.querySelectorAll(".testimonial-other");

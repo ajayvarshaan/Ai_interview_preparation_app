@@ -44,7 +44,6 @@ const SignUp = ({ setCurrentPage }) => {
   const particlesRef = useRef(null);
   const shineRef = useRef(null);
 
-  // Magnetic button handler
   const handleMouseMove = useCallback((e) => {
     const btn = buttonRef.current;
     if (!btn || isLoading) return;
@@ -60,7 +59,6 @@ const SignUp = ({ setCurrentPage }) => {
     gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.4)" });
   }, []);
 
-  // Entrance animation
   useEffect(() => {
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
@@ -96,7 +94,6 @@ const SignUp = ({ setCurrentPage }) => {
     return () => { tl.kill(); gsap.killTweensOf("*"); };
   }, []);
 
-  // Error animation
   useEffect(() => {
     if (error && errorRef.current) {
       gsap.fromTo(errorRef.current, { opacity: 0, y: -8, scale: 0.95, x: -3 }, { opacity: 1, y: 0, scale: 1, x: 0, duration: 0.4, ease: "back.out(2)" });
@@ -155,7 +152,7 @@ const SignUp = ({ setCurrentPage }) => {
       </div>
 
       <div ref={cardRef} className="relative z-10 w-full bg-white/60 backdrop-blur-xl rounded-2xl border border-white/40 shadow-xl p-5 sm:p-6" style={{ perspective: 1000 }}>
-        {/* ===== HEADER ===== */}
+     
         <div ref={headerRef} className="mb-4 text-center">
           <div className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-400 rounded-xl shadow-lg shadow-orange-200/50 mb-2">
             <LuSparkles className="text-white text-base" />
@@ -165,27 +162,27 @@ const SignUp = ({ setCurrentPage }) => {
         </div>
 
         <form onSubmit={handleSignUp}>
-          {/* Profile Photo - smaller */}
+      
           <div ref={profileRef} className="flex justify-center -mt-1 mb-1">
             <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
           </div>
 
-          {/* Full Name */}
+       
           <div ref={nameRef} className="mb-0">
             <Input value={fullName} onChange={(e) => { setFullName(e.target.value); if (error) setError(null); setFieldErrors((p) => ({ ...p, name: "" })); }} label="Full Name" placeholder="John Doe" type="text" icon={LuUser} error={fieldErrors.name} />
           </div>
 
-          {/* Email */}
+     
           <div ref={emailRef} className="mb-0">
             <Input value={email} onChange={(e) => { setEmail(e.target.value); if (error) setError(null); setFieldErrors((p) => ({ ...p, email: "" })); }} label="Email Address" placeholder="john@example.com" type="text" icon={LuMail} error={fieldErrors.email} />
           </div>
 
-          {/* Password - no duplicate eye button */}
+  
           <div ref={passwordRef}>
             <Input value={password} onChange={(e) => { setPassword(e.target.value); if (error) setError(null); setFieldErrors((p) => ({ ...p, password: "" })); }} label="Password" placeholder="Min 8 characters" type="password" icon={LuLock} error={fieldErrors.password} />
           </div>
 
-          {/* Error */}
+    
           {error && (
             <div ref={errorRef} className="my-2">
               <div className="flex items-center gap-2 bg-red-50/80 backdrop-blur-sm border border-red-200/60 text-red-600 text-xs px-3 py-2 rounded-xl">
@@ -195,7 +192,7 @@ const SignUp = ({ setCurrentPage }) => {
             </div>
           )}
 
-          {/* Submit */}
+    
           <div ref={buttonRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} className="relative mt-2">
             <button type="submit" disabled={isLoading} className="relative w-full bg-gradient-to-r from-orange-500 via-orange-400 to-orange-500 hover:from-orange-600 hover:via-orange-500 hover:to-orange-600 text-white py-3 rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-orange-200/60 transition-all duration-300 overflow-hidden group">
               <div ref={shineRef} className="absolute inset-0 -skew-x-12 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent" />
@@ -214,7 +211,7 @@ const SignUp = ({ setCurrentPage }) => {
             </button>
           </div>
 
-          {/* Switch */}
+         
           <div ref={switchRef} className="text-center mt-3 pt-2 border-t border-gray-100">
             <p className="text-xs text-gray-400">
               Already have an account?{" "}

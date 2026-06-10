@@ -31,7 +31,7 @@ const QuestionCard = ({
     }
   }, [isExpanded]);
 
-  // GSAP card entrance
+
   useEffect(() => {
     if (cardRef.current) {
       gsap.fromTo(
@@ -53,7 +53,7 @@ const QuestionCard = ({
     }
   }, []);
 
-  // GSAP answer expand animation
+
   useEffect(() => {
     if (isExpanded && answerInnerRef.current) {
       gsap.fromTo(
@@ -64,7 +64,7 @@ const QuestionCard = ({
     }
   }, [isExpanded]);
 
-  // GSAP pulse on pin toggle
+
   useEffect(() => {
     if (cardRef.current && isPinned) {
       gsap.fromTo(

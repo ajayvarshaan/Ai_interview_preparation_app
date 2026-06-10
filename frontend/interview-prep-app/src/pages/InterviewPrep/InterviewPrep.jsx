@@ -37,7 +37,7 @@ const InterviewPrep = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("all");
 
-  // Refs for GSAP animations
+
   const pageRef = useRef(null);
   const headerRef = useRef(null);
   const progressRef = useRef(null);
@@ -106,7 +106,7 @@ const InterviewPrep = () => {
       if (response.data) {
         toast.success("Added More Q&A!!");
         fetchSessionDetailsById();
-        // Animate new questions coming in
+    
         gsap.fromTo(
           questionsContainerRef.current?.children,
           { opacity: 0, y: 30, scale: 0.95 },
@@ -125,23 +125,22 @@ const InterviewPrep = () => {
     return () => {};
   }, []);
 
-  // === MASTER GSAP ANIMATION ENGINE ===
+
   useGSAP(() => {
     if (!sessionData) return;
 
     const mm = gsap.matchMedia();
 
-    // 1. PAGE ENTRANCE – cinematic reveal
+
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    // Header stagger entrance
     tl.fromTo(
       headerRef.current?.querySelectorAll(".anim-header > *"),
       { opacity: 0, y: 30, scale: 0.9 },
       { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.1, ease: "back.out(1.7)" }
     );
 
-    // Progress section with a bounce
+
     tl.fromTo(
       progressRef.current,
       { opacity: 0, y: 20, scaleX: 0.95 },
@@ -149,7 +148,7 @@ const InterviewPrep = () => {
       "-=0.2"
     );
 
-    // Animate progress bar fill
+
     if (progressBarRef.current) {
       tl.fromTo(
         progressBarRef.current,
@@ -159,7 +158,7 @@ const InterviewPrep = () => {
       );
     }
 
-    // Controls stagger
+   
     tl.fromTo(
       controlsRef.current?.children,
       { opacity: 0, y: 20 },
@@ -167,7 +166,6 @@ const InterviewPrep = () => {
       "-=0.3"
     );
 
-    // 2. FLOATING ORBS – ambient background effect
     if (floatingElementsRef.current) {
       const orbs = floatingElementsRef.current.querySelectorAll(".floating-orb");
       orbs.forEach((orb, i) => {
@@ -185,7 +183,7 @@ const InterviewPrep = () => {
       });
     }
 
-    // 4. BORDER GRADIENT FLOW for the drawer panel
+  
     gsap.to(".panel-border-glow", {
       backgroundPosition: "200% 0",
       duration: 6,
@@ -193,7 +191,6 @@ const InterviewPrep = () => {
       ease: "linear",
     });
 
-    // 5. CTA BUTTON PULSE
     gsap.to(".cta-glow-btn", {
       boxShadow: "0 0 30px rgba(99,102,241,0.5), 0 0 60px rgba(139,92,246,0.2)",
       duration: 1.8,
@@ -202,7 +199,7 @@ const InterviewPrep = () => {
       ease: "sine.inOut",
     });
 
-    // 6. STAT COUNTER – animate numbers
+
     const statNumbers = document.querySelectorAll(".stat-number");
     statNumbers.forEach((el) => {
       const finalVal = parseInt(el.dataset.value) || 0;
@@ -264,7 +261,7 @@ const InterviewPrep = () => {
   return (
     <DashboardLayout>
       <div ref={pageRef} className="relative overflow-hidden">
-        {/* === FLOATING AMBIENT ORBS (background only) === */}
+   
         <div
           ref={floatingElementsRef}
           className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
@@ -359,7 +356,6 @@ const InterviewPrep = () => {
           }
         `}</style>
 
-        {/* === AMBIENT NOISE TEXTURE OVERLAY === */}
         <div
           className="pointer-events-none fixed inset-0 z-[1] opacity-[0.03]"
           style={{
@@ -379,7 +375,7 @@ const InterviewPrep = () => {
 
         <div className="page-bg min-h-screen px-4 md:px-8 py-7 relative z-10">
 
-          {/* === HEADER SECTION with GSAP stagger === */}
+    
           <div ref={headerRef} className="anim-header">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div className="flex items-center gap-3 group">
@@ -439,7 +435,7 @@ const InterviewPrep = () => {
             </div>
           </div>
 
-          {/* === PROGRESS CARD with GSAP === */}
+    
           <div ref={progressRef}>
             <div className="mb-4 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100/80 shadow-sm px-5 py-4 hover:shadow-md hover:border-indigo-100 transition-all duration-300">
               <div className="flex items-center justify-between mb-2">
@@ -487,7 +483,7 @@ const InterviewPrep = () => {
                   animate={{ scaleX: 1 }}
                   transition={{ duration: 1.2, ease: "power4.out", delay: 0.3 }}
                 />
-                {/* Shimmer overlay */}
+              
                 <div
                   className="absolute inset-0 h-full rounded-full opacity-30"
                   style={{
@@ -499,7 +495,7 @@ const InterviewPrep = () => {
                     pointerEvents: "none",
                   }}
                 />
-                {/* Glow dot at end of progress */}
+              
                 {progress > 0 && progress < 100 && (
                   <div
                     className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-md border-2 border-indigo-300 z-10"
@@ -513,9 +509,8 @@ const InterviewPrep = () => {
             </div>
           </div>
 
-          {/* === SEARCH & FILTER CONTROLS === */}
           <div ref={controlsRef} className="mb-5 flex flex-col sm:flex-row gap-3">
-            {/* Search */}
+    
             <div className="relative flex-1 group">
               <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 transition-colors" size={15} />
               <input
@@ -535,7 +530,7 @@ const InterviewPrep = () => {
               )}
             </div>
 
-            {/* Filters */}
+        
             <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl px-2 py-1.5 shadow-sm">
               <LuFilter size={13} className="text-gray-400 ml-1" />
               {FILTERS.map((f) => (
@@ -563,7 +558,7 @@ const InterviewPrep = () => {
             </div>
           </div>
 
-          {/* === QUESTIONS GRID === */}
+          
           <div className="grid grid-cols-12 gap-6">
             <div
               className={`col-span-12 transition-all duration-500 ${
@@ -655,7 +650,7 @@ const InterviewPrep = () => {
               </AnimatePresence>
             </div>
 
-            {/* === AI CONCEPT EXPLANATION DRAWER === */}
+  
             <AnimatePresence>
               {openLearnMoreDrawer && (
                 <>
@@ -742,7 +737,7 @@ const InterviewPrep = () => {
                         </div>
                       </div>
 
-                      {/* Content */}
+                    
                       <div className="bg-white/80 backdrop-blur-sm p-5 max-h-[calc(100vh-240px)] overflow-y-auto">
                         {errorMsg && (
                           <motion.div
@@ -771,7 +766,7 @@ const InterviewPrep = () => {
                           </motion.div>
                         )}
 
-                        {/* Quick actions footer */}
+                
                         {!isLoading && explanation && (
                           <motion.div
                             initial={{ opacity: 0 }}
